@@ -22,13 +22,13 @@ FROM nginx:1.25-alpine
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy built application from builder
-COPY --from=builder --chown=nginx:nginx /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Change ownership of nginx directories
-RUN chown -R nginx:nginx /var/cache/nginx /var/log/nginx /var/run && \
-    chmod -R 755 /var/cache/nginx /var/log/nginx && \
-    touch /var/run/nginx.pid && \
-    chown nginx:nginx /var/run/nginx.pid
+# Create writable directories for nginx and set permissions
+RUN mkdir -p /var/cache/nginx/client_temp && \
+    mkdir -p /var/run/nginx && \
+    chown -R nginx:nginx /var/cache/nginx /var/run/nginx /var/log/nginx /usr/share/nginx/html && \
+    chmod -R 755 /var/cache/nginx /var/run/nginx /var/log/nginx
 
 # Switch to non-root user
 USER nginx
