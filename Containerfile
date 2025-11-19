@@ -18,10 +18,6 @@ RUN npm run build
 # Runtime stage using Nginx
 FROM nginx:1.25-alpine
 
-# Create non-root user for security (required by OpenShift)
-RUN addgroup -g 1001 -S nginx && \
-    adduser -S nginx -u 1001
-
 # Copy Nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 
