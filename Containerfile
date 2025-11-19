@@ -24,11 +24,16 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Copy built application from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Create writable directories for nginx and set permissions
-RUN mkdir -p /var/cache/nginx/client_temp && \
-    mkdir -p /var/run/nginx && \
+# Create all writable directories for nginx before switching user
+RUN mkdir -p /var/cache/nginx/client_temp \
+             /var/cache/nginx/proxy_temp \
+             /var/cache/nginx/fastcgi_temp \
+             /var/cache/nginx/uwsgi_temp \
+             /var/cache/nginx/scgi_temp \
+             /var/run/nginx && \
     chown -R nginx:nginx /var/cache/nginx /var/run/nginx /var/log/nginx /usr/share/nginx/html && \
-    chmod -R 755 /var/cache/nginx /var/run/nginx /var/log/nginx
+    chmod -R 775 /var/cache/nginx /var/run/nginx /var/log/nginx && \
+    rm -f /etc/nginx/conf.d/default.conf
 
 # Switch to non-root user
 USER nginx
@@ -40,5 +45,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --quiet --tries=1 --spider http://localhost:8080/ || exit 1
 
-# Run Nginx
+# Run Nginx directly, bypassing entrypoint
 CMD ["nginx", "-g", "daemon off;"]
