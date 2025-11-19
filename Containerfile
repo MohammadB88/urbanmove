@@ -29,10 +29,9 @@ RUN mkdir -p /var/cache/nginx/client_temp \
              /var/cache/nginx/proxy_temp \
              /var/cache/nginx/fastcgi_temp \
              /var/cache/nginx/uwsgi_temp \
-             /var/cache/nginx/scgi_temp \
-             /var/run/nginx && \
-    chown -R nginx:nginx /var/cache/nginx /var/run/nginx /var/log/nginx /usr/share/nginx/html && \
-    chmod -R 775 /var/cache/nginx /var/run/nginx /var/log/nginx && \
+             /var/cache/nginx/scgi_temp && \
+    chown -R nginx:nginx /var/cache/nginx /var/log/nginx /usr/share/nginx/html && \
+    chmod -R 775 /var/cache/nginx /var/log/nginx && \
     rm -f /etc/nginx/conf.d/default.conf
 
 # Switch to non-root user
