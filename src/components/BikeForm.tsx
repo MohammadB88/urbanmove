@@ -46,7 +46,9 @@ export const BikeForm = ({ onPrediction }: BikeFormProps) => {
     try {
       console.log("Sending data to API:", formData);
       
-      const response = await fetch("https://bike-model-api-route-model-api.apps.cluster-2t4c4.dynamic.redhatworkshops.io/predict", {
+      const apiUrl = window.MODEL_API_URL || "http://localhost:8000";
+
+      const response = await fetch(`${apiUrl}/predict`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

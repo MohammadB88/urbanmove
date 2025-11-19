@@ -18,8 +18,10 @@ RUN npm run build
 # Runtime stage using Nginx
 FROM nginx:1.25-alpine
 
-# Copy Nginx configuration
+# Copy Nginx configuration and entrypoint script
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 # Copy built application from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
@@ -44,5 +46,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --quiet --tries=1 --spider http://localhost:8080/ || exit 1
 
-# Run Nginx directly, bypassing entrypoint
-CMD ["nginx", "-g", "daemon off;"]
+# Run entrypoint script
+CMD ["/docker-entrypoint.sh"]

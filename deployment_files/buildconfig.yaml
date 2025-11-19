@@ -1,0 +1,22 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: urbanmove-frontend
+  namespace: urbanmove
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'urbanmove-frontend:3.0'
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: Containerfile
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/MohammadB88/urbanmove.git'
+      ref: containerfile
+  triggers:
+    - type: ConfigChange
+  runPolicy: Serial

@@ -1,0 +1,62 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: bike-sharing-frontend
+  namespace: urbanmove
+  labels:
+    app: bike-sharing-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bike-sharing-frontend
+  template:
+    metadata:
+      labels:
+        app: bike-sharing-frontend
+    spec:
+      containers:
+        - name: container
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/urbanmove/urbanmove-frontend:3.0
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: bike-sharing-frontend
+  namespace: urbanmove
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+  selector:
+    app: bike-sharing-frontend
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: bike-sharing-frontend
+  namespace: urbanmove
+spec:
+  path: /
+  to:
+    name: bike-sharing-frontend
+    weight: 100
+    kind: Service
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
