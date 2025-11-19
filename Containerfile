@@ -33,8 +33,11 @@ RUN mkdir -p /var/cache/nginx/client_temp \
              /var/cache/nginx/uwsgi_temp \
              /var/cache/nginx/scgi_temp && \
     chown -R nginx:nginx /var/cache/nginx /var/log/nginx /usr/share/nginx/html && \
-    chmod -R 775 /var/cache/nginx /var/log/nginx && \
+    chmod -R 775 /var/cache/nginx /var/log/nginx /usr/share/nginx/html && \
     rm -f /etc/nginx/conf.d/default.conf
+
+# Make entrypoint script executable (runs as root before USER switch)
+RUN chmod +x /docker-entrypoint.sh
 
 # Switch to non-root user
 USER nginx
